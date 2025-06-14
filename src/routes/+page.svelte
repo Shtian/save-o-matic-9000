@@ -1,7 +1,8 @@
 <script>
   import { onMount } from 'svelte';
   import { tweened } from 'svelte/motion';
-  import { cubicOut } from 'svelte/easing';
+import { cubicOut } from 'svelte/easing';
+import { Save, DollarSign, RefreshCcw, Trash2 } from 'lucide-svelte';
   import Confetti from 'svelte-confetti';
 
   let goal = 0;
@@ -61,7 +62,9 @@
   <section>
     <h2>Sparemål</h2>
     <input type="number" bind:value={goal} min="0" placeholder="Skriv inn målbeløp" />
-    <button on:click={setGoal}>Lagre mål</button>
+    <button on:click={setGoal}>
+      <Save size={16} /> Lagre mål
+    </button>
   </section>
 
   {#if goal > 0}
@@ -73,8 +76,12 @@
         min="0"
         placeholder="Skriv inn spart beløp"
       />
-      <button on:click={addMoney}>Legg til penger</button>
-      <button on:click={resetSavings}>Start på nytt</button>
+      <button on:click={addMoney}>
+        <DollarSign size={16} /> Legg til penger
+      </button>
+      <button on:click={resetSavings}>
+        <RefreshCcw size={16} /> Start på nytt
+      </button>
     </section>
 
     <section>
@@ -91,7 +98,9 @@
     </section>
   {/if}
 
-  <button class="clear" on:click={clearAll}>Tøm alle data</button>
+  <button class="clear" on:click={clearAll}>
+    <Trash2 size={16} /> Tøm alle data
+  </button>
 </div>
 
 <style>
@@ -161,6 +170,10 @@
   }
 
   button {
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+    justify-content: center;
     margin: 0.5rem;
     padding: 0.75rem 1.5rem;
     background: #ff0;
