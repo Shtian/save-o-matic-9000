@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { tweened } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
+  import Confetti from 'svelte-confetti';
 
   let goal = 0;
   let current = 0;
@@ -55,37 +56,42 @@
 </script>
 
 <div class="container">
-  <h1>Kid's Savings Tracker</h1>
+  <h1 style="margin-bottom: 3rem;">Save-O-Matic 9000</h1>
 
   <section>
-    <h2>Set Your Saving Goal</h2>
-    <input type="number" bind:value={goal} min="0" placeholder="Enter goal amount" />
-    <button on:click={setGoal}>Save Goal</button>
+    <h2>Sparemål</h2>
+    <input type="number" bind:value={goal} min="0" placeholder="Skriv inn målbeløp" />
+    <button on:click={setGoal}>Lagre mål</button>
   </section>
 
   {#if goal > 0}
     <section>
-      <h2>Track Your Savings</h2>
+      <h2>Din sparing</h2>
       <input
         type="number"
         bind:value={newAmount}
         min="0"
-        placeholder="Enter amount saved"
+        placeholder="Skriv inn spart beløp"
       />
-      <button on:click={addMoney}>Add Money</button>
-      <button on:click={resetSavings}>Reset Savings</button>
+      <button on:click={addMoney}>Legg til penger</button>
+      <button on:click={resetSavings}>Start på nytt</button>
     </section>
 
     <section>
-      <h2>Progress</h2>
+      <h2>Fremgang</h2>
       <progress max={goal} value={$tweenedCurrent}></progress>
       <div class="progress-info">
-        {current} / {goal} ({Math.round(percentage)}%)
+        {current} kr / {goal} kr ({Math.round(percentage)}%)
       </div>
+      {#if current >= goal}
+        <div class="confetti-container">
+          <Confetti infinite amount={50} />
+        </div>
+      {/if}
     </section>
   {/if}
 
-  <button class="clear" on:click={clearAll}>Clear All Data</button>
+  <button class="clear" on:click={clearAll}>Tøm alle data</button>
 </div>
 
 <style>
@@ -194,5 +200,11 @@
   .progress-info {
     margin-top: 0.5rem;
     font-size: 0.9rem;
+  }
+
+  .confetti-container {
+    position: absolute;
+    top: 70%;
+    left: 50%;
   }
 </style>
