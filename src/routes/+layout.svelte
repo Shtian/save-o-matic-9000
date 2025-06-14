@@ -3,6 +3,6 @@
   import '../app.css';
 </script>
 
-<div>
+<main class="min-h-screen bg-pink-100">
   {@render children()}
-</div>
+</main>

@@ -1,19 +1,19 @@
 <script>
   import { onMount } from 'svelte';
-  import { tweened } from 'svelte/motion';
-import { cubicOut } from 'svelte/easing';
-import { Save, DollarSign, RefreshCcw, Trash2 } from 'lucide-svelte';
+  import { Tween } from 'svelte/motion';
+  import { cubicOut } from 'svelte/easing';
+  import { Save, DollarSign, RefreshCcw, Trash2 } from 'lucide-svelte';
   import Confetti from 'svelte-confetti';
 
   let goal = 0;
   let current = 0;
   let newAmount = '';
 
-  // tweened store to animate progress changes
-  const tweenedCurrent = tweened(0, { duration: 600, easing: cubicOut });
+  // Create a new Tween instance for animating progress changes
+  const tween = new Tween(0, { duration: 600, easing: cubicOut });
 
-  // update tween whenever current changes
-  $: tweenedCurrent.set(current);
+  // Update tween target whenever current changes
+  $: tween.target = current;
 
   onMount(() => {
     const storedGoal = localStorage.getItem('savingGoal');
@@ -56,168 +56,82 @@ import { Save, DollarSign, RefreshCcw, Trash2 } from 'lucide-svelte';
   }
 </script>
 
-<div class="container">
-  <h1 style="margin-bottom: 3rem;">Save-O-Matic 9000</h1>
+<div class="font-['Press_Start_2P'] text-black">
+  <div class="relative max-w-2xl mx-auto my-8 p-8 bg-white border-8 border-blue-500 rounded-lg shadow-[8px_8px_0_#f0f,-8px_-8px_0_#0ff] text-center">
+    <div class="absolute -top-5 -left-5 w-10 h-10 border-4 border-pink-500 rotate-45"></div>
+    <div class="absolute -bottom-5 -right-5 w-10 h-10 bg-cyan-400 clip-triangle"></div>
 
-  <section>
-    <h2>Sparemål</h2>
-    <input type="number" bind:value={goal} min="0" placeholder="Skriv inn målbeløp" />
-    <button on:click={setGoal}>
-      <Save size={16} /> Lagre mål
-    </button>
-  </section>
+    <h1 class="mb-12 text-2xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">Save-O-Matic 9000</h1>
 
-  {#if goal > 0}
-    <section>
-      <h2>Din sparing</h2>
+    <section class="mb-6">
+      <h2 class="mb-2 text-xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">Sparemål</h2>
       <input
         type="number"
-        bind:value={newAmount}
+        bind:value={goal}
         min="0"
-        placeholder="Skriv inn spart beløp"
+        placeholder="500"
+        class="bg-black text-green-400 border-4 border-pink-400 p-3 text-base w-40"
       />
-      <button on:click={addMoney}>
-        <DollarSign size={16} /> Legg til penger
-      </button>
-      <button on:click={resetSavings}>
-        <RefreshCcw size={16} /> Start på nytt
+      <button
+        on:click={setGoal}
+        class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-yellow-300 text-black border-4 border-pink-500 text-sm cursor-pointer hover:bg-pink-500 hover:text-white"
+      >
+        <Save size={16} /> Lagre mål
       </button>
     </section>
 
-    <section>
-      <h2>Fremgang</h2>
-      <progress max={goal} value={$tweenedCurrent}></progress>
-      <div class="progress-info">
-        {current} kr / {goal} kr ({Math.round(percentage)}%)
-      </div>
-      {#if current >= goal}
-        <div class="confetti-container">
-          <Confetti infinite amount={50} />
+    {#if goal > 0}
+      <section class="mb-6">
+        <h2 class="mb-2 text-xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">Din sparing</h2>
+        <input
+          type="number"
+          bind:value={newAmount}
+          min="0"
+          placeholder="0"
+          class="bg-black text-green-400 border-4 border-pink-400 p-3 text-base w-40"
+        />
+        <button
+          on:click={addMoney}
+          class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-yellow-300 text-black border-4 border-pink-500 text-sm cursor-pointer hover:bg-pink-500 hover:text-white"
+        >
+          <DollarSign size={16} /> Legg til penger
+        </button>
+        <button
+          on:click={resetSavings}
+          class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-yellow-300 text-black border-4 border-pink-500 text-sm cursor-pointer hover:bg-pink-500 hover:text-white"
+        >
+          <RefreshCcw size={16} /> Start på nytt
+        </button>
+      </section>
+
+      <section class="mb-6">
+        <h2 class="mb-2 text-xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">Fremgang</h2>
+        <progress max={goal} value={tween.current} class="w-full h-8 border-2 border-black bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-green-500"></progress>
+        <div class="mt-2 text-sm relative">
+          {current} kr / {goal} kr ({Math.round(percentage)}%)
+
+          {#if current >= goal}
+            <div class="absolute left-1/2">
+              <Confetti amount={50} />
+            </div>
+          {/if}
         </div>
-      {/if}
-    </section>
-  {/if}
+      </section>
+    {/if}
 
-  <button class="clear" on:click={clearAll}>
-    <Trash2 size={16} /> Tøm alle data
-  </button>
+    <button
+      on:click={clearAll}
+      class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-red-500 text-white border-4 border-black text-sm cursor-pointer hover:bg-red-600"
+    >
+      <Trash2 size={16} /> Tøm alle data
+    </button>
+  </div>
 </div>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
-  :global(body) {
-    background: #ffd6d6;
-    font-family: 'Press Start 2P', monospace;
-    color: #000;
-    margin: 0;
-    padding: 0;
-  }
-
-  .container {
-    position: relative;
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: #fff;
-    border: 6px solid #00f;
-    border-radius: 8px;
-    box-shadow: 8px 8px 0 #f0f, -8px -8px 0 #0ff;
-    text-align: center;
-  }
-
-  .container::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    left: -20px;
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f06;
-    transform: rotate(45deg);
-  }
-
-  .container::after {
-    content: '';
-    position: absolute;
-    bottom: -20px;
-    right: -20px;
-    width: 40px;
-    height: 40px;
-    background: #0ff;
+  
+  .clip-triangle {
     clip-path: polygon(0 0, 100% 0, 50% 100%);
-  }
-
-  h1,
-  h2 {
-    margin: 0.5rem 0;
-    text-transform: uppercase;
-    color: #f06;
-    text-shadow: 2px 2px 0 #0ff;
-  }
-
-  section {
-    margin-bottom: 1.5rem;
-  }
-
-  input {
-    background: #000;
-    color: #0f0;
-    border: 4px solid #f0f;
-    padding: 0.75rem;
-    font-size: 1rem;
-    width: 150px;
-  }
-
-  button {
-    display: inline-flex;
-    gap: 0.25rem;
-    align-items: center;
-    justify-content: center;
-    margin: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    background: #ff0;
-    color: #000;
-    border: 4px solid #f06;
-    font-size: 0.9rem;
-    cursor: pointer;
-    text-shadow: 1px 1px #fff;
-  }
-
-  button:hover {
-    background: #f06;
-    color: #fff;
-  }
-
-  .clear {
-    background: #f00;
-    color: #fff;
-    border-color: #000;
-  }
-
-  progress {
-    width: 100%;
-    height: 2rem;
-    border: 2px solid #000;
-    background: #ddd;
-  }
-
-  progress::-webkit-progress-bar {
-    background: #ddd;
-  }
-
-  progress::-webkit-progress-value {
-    background: #0f0;
-  }
-
-  .progress-info {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-  }
-
-  .confetti-container {
-    position: absolute;
-    top: 70%;
-    left: 50%;
   }
 </style>
