@@ -54,7 +54,7 @@
   }
 </script>
 
-<div class="font-['Press_Start_2P'] text-black">
+<div class="font-['Press_Start_2P'] text-black m-6 py-6 sm:m-0">
   <div class="relative max-w-2xl mx-auto my-8 p-8 bg-white border-8 border-blue-500 rounded-lg shadow-[8px_8px_0_#f0f,-8px_-8px_0_#0ff] text-center">
     <div class="absolute -top-5 -left-5 w-10 h-10 border-4 border-pink-500 rotate-45"></div>
     <div class="absolute -bottom-5 -right-5 w-10 h-10 bg-cyan-400 clip-triangle"></div>
