@@ -5,15 +5,13 @@
   import { Save, DollarSign, RefreshCcw, Trash2 } from 'lucide-svelte';
   import Confetti from 'svelte-confetti';
 
-  let goal = 0;
-  let current = 0;
-  let newAmount = '';
+  let { goal = 0, current = 0, newAmount = '' } = $props();
 
-  // Create a new Tween instance for animating progress changes
   const tween = new Tween(0, { duration: 600, easing: cubicOut });
 
-  // Update tween target whenever current changes
-  $: tween.target = current;
+  $effect(() => {
+    tween.target = current;
+  });
 
   onMount(() => {
     const storedGoal = localStorage.getItem('savingGoal');
@@ -22,7 +20,7 @@
     if (storedCurrent !== null) current = parseFloat(storedCurrent);
   });
 
-  $: percentage = goal > 0 ? Math.min(100, (current / goal) * 100) : 0;
+  const percentage = $derived(goal > 0 ? Math.min(100, (current / goal) * 100) : 0);
 
   function setGoal() {
     goal = parseFloat(String(goal)) || 0;
@@ -73,7 +71,7 @@
         class="bg-black text-green-400 border-4 border-pink-400 p-3 text-base w-40"
       />
       <button
-        on:click={setGoal}
+        onclick={setGoal}
         class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-yellow-300 text-black border-4 border-pink-500 text-sm cursor-pointer hover:bg-pink-500 hover:text-white"
       >
         <Save size={16} /> Lagre mål
@@ -91,13 +89,13 @@
           class="bg-black text-green-400 border-4 border-pink-400 p-3 text-base w-40"
         />
         <button
-          on:click={addMoney}
+          onclick={addMoney}
           class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-yellow-300 text-black border-4 border-pink-500 text-sm cursor-pointer hover:bg-pink-500 hover:text-white"
         >
           <DollarSign size={16} /> Legg til penger
         </button>
         <button
-          on:click={resetSavings}
+          onclick={resetSavings}
           class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-yellow-300 text-black border-4 border-pink-500 text-sm cursor-pointer hover:bg-pink-500 hover:text-white"
         >
           <RefreshCcw size={16} /> Start på nytt
@@ -120,7 +118,7 @@
     {/if}
 
     <button
-      on:click={clearAll}
+      onclick={clearAll}
       class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-red-500 text-white border-4 border-black text-sm cursor-pointer hover:bg-red-600"
     >
       <Trash2 size={16} /> Tøm alle data
