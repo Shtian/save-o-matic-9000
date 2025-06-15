@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { Tween } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
-  import { Save, DollarSign, RefreshCcw, Trash2 } from 'lucide-svelte';
+  import { Save, DollarSign, Trash2 } from 'lucide-svelte';
   import Confetti from 'svelte-confetti';
 
   let { goal = 0, current = 0, newAmount = '' } = $props();
@@ -33,15 +33,15 @@
 
   function addMoney() {
     const amount = parseFloat(newAmount);
-    if (!isNaN(amount) && amount > 0) {
+    if (!isNaN(amount)) {
       current = Math.min(goal, current + amount);
       localStorage.setItem('currentSavings', current.toString());
     }
     newAmount = '';
   }
 
-  function resetSavings() {
-    current = 0;
+  function addMoneyWith(amount: number) {
+    current = Math.min(goal, current + amount);
     localStorage.setItem('currentSavings', current.toString());
   }
 
@@ -84,7 +84,6 @@
         <input
           type="number"
           bind:value={newAmount}
-          min="0"
           placeholder="0"
           class="bg-black text-green-400 border-4 border-pink-400 p-3 text-base w-40"
         />
@@ -95,25 +94,45 @@
           <DollarSign size={16} /> Legg til penger
         </button>
         <button
-          onclick={resetSavings}
+          onclick={() => addMoneyWith(1)}
           class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-yellow-300 text-black border-4 border-pink-500 text-sm cursor-pointer hover:bg-pink-500 hover:text-white"
         >
-          <RefreshCcw size={16} /> Start på nytt
+          +1 kr
+        </button>
+        <button
+          onclick={() => addMoneyWith(5)}
+          class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-yellow-300 text-black border-4 border-pink-500 text-sm cursor-pointer hover:bg-pink-500 hover:text-white"
+        >
+          +5 kr
+        </button>
+        <button
+          onclick={() => addMoneyWith(10)}
+          class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-yellow-300 text-black border-4 border-pink-500 text-sm cursor-pointer hover:bg-pink-500 hover:text-white"
+        >
+          +10 kr
         </button>
       </section>
 
-      <section class="mb-6">
+      <section class="mb-6 space-y-6">
         <h2 class="mb-2 text-xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">Fremgang</h2>
-        <progress max={goal} value={tween.current} class="w-full h-8 border-2 border-black bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-green-500"></progress>
-        <div class="mt-2 text-sm relative">
+        <div><progress max={goal} value={tween.current} class="w-full h-8 border-2 border-black bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-green-500"></progress>
+        <div class=" text-sm relative">
           {current} kr / {goal} kr ({Math.round(percentage)}%)
-
-          {#if current >= goal}
-            <div class="absolute left-1/2">
-              <Confetti amount={50} />
-            </div>
-          {/if}
         </div>
+        </div>
+
+        {#if current >= goal}
+        <div class="flex text-2xl justify-center relative text-pink-500 drop-shadow-[2px_2px_0_#0ff] uppercase">
+          Bra jobbet! Du har nått målet ditt!
+          <div class="absolute left-1/2">
+            <Confetti amount={50} />
+          </div>
+        </div>
+        {:else}
+        <div class="mb-2 uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">
+          Du mangler <span class="text-black">{goal - current} kr</span> for å nå målet ditt!
+        </div>
+        {/if}
       </section>
     {/if}
 
