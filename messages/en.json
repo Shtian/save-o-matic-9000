@@ -1,0 +1,11 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "savings_goal": "Savings Goal",
+  "save_goal": "Save Goal",
+  "your_savings": "Your Savings",
+  "add_money": "Add Money",
+  "progress": "Progress",
+  "goal_reached": "Great job! You've reached your goal!",
+  "remaining_amount": "You need {amount} kr more to reach your goal!",
+  "clear_all_data": "Clear All Data"
+}

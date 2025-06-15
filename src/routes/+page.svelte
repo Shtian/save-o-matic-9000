@@ -4,6 +4,7 @@
   import { cubicOut } from 'svelte/easing';
   import { Save, DollarSign, Trash2 } from 'lucide-svelte';
   import Confetti from 'svelte-confetti';
+  import * as m from '$paraglide/messages';
 
   let { goal = 0, current = 0, newAmount = '' } = $props();
 
@@ -62,7 +63,7 @@
     <h1 class="mb-12 text-2xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">Save-O-Matic 9000</h1>
 
     <section class="mb-6">
-      <h2 class="mb-2 text-xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">Sparemål</h2>
+      <h2 class="mb-2 text-xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">{m.savings_goal()}</h2>
       <input
         type="number"
         bind:value={goal}
@@ -74,13 +75,13 @@
         onclick={setGoal}
         class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-yellow-300 text-black border-4 border-pink-500 text-sm cursor-pointer hover:bg-pink-500 hover:text-white"
       >
-        <Save size={16} /> Lagre mål
+        <Save size={16} /> {m.save_goal()}
       </button>
     </section>
 
     {#if goal > 0}
       <section class="mb-6">
-        <h2 class="mb-2 text-xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">Din sparing</h2>
+        <h2 class="mb-2 text-xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">{m.your_savings()}</h2>
         <input
           type="number"
           bind:value={newAmount}
@@ -91,7 +92,7 @@
           onclick={addMoney}
           class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-yellow-300 text-black border-4 border-pink-500 text-sm cursor-pointer hover:bg-pink-500 hover:text-white"
         >
-          <DollarSign size={16} /> Legg til penger
+          <DollarSign size={16} /> {m.add_money()}
         </button>
         <button
           onclick={() => addMoneyWith(1)}
@@ -114,7 +115,7 @@
       </section>
 
       <section class="mb-6 space-y-6">
-        <h2 class="mb-2 text-xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">Fremgang</h2>
+        <h2 class="mb-2 text-xl uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">{m.progress()}</h2>
         <div><progress max={goal} value={tween.current} class="w-full h-8 border-2 border-black bg-gray-200 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-green-500"></progress>
         <div class=" text-sm relative">
           {current} kr / {goal} kr ({Math.round(percentage)}%)
@@ -123,14 +124,14 @@
 
         {#if current >= goal}
         <div class="flex text-2xl justify-center relative text-pink-500 drop-shadow-[2px_2px_0_#0ff] uppercase">
-          Bra jobbet! Du har nått målet ditt!
+          {m.goal_reached()}
           <div class="absolute left-1/2">
             <Confetti amount={50} />
           </div>
         </div>
         {:else}
         <div class="mb-2 uppercase text-pink-500 drop-shadow-[2px_2px_0_#0ff]">
-          Du mangler <span class="text-black">{goal - current} kr</span> for å nå målet ditt!
+          {m.remaining_amount({ amount: goal - current })}
         </div>
         {/if}
       </section>
@@ -140,7 +141,7 @@
       onclick={clearAll}
       class="inline-flex gap-1 items-center justify-center m-2 px-6 py-3 bg-red-500 text-white border-4 border-black text-sm cursor-pointer hover:bg-red-600"
     >
-      <Trash2 size={16} /> Tøm alle data
+      <Trash2 size={16} /> {m.clear_all_data()}
     </button>
   </div>
 </div>
